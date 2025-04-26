@@ -1,0 +1,38 @@
+<!-- Tu formulario de registro -->
+<form id="register-form">
+  <h3>Registrarse</h3>
+  <input type="email" id="email" placeholder="Correo" required><br>
+  <input type="password" id="password" placeholder="Contraseña" required><br>
+  <input type="text" id="nnid" placeholder="Tu NNID (nombre de usuario)" required><br>
+  <input type="text" id="mii_url" placeholder="URL de tu imagen Mii"><br>
+  <button type="submit">Registrarse</button>
+</form>
+
+<script>
+  document.getElementById("register-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const nnid = document.getElementById("nnid").value;
+    const mii_url = document.getElementById("mii_url").value || "default_mii.png"; // Si no se ingresa Mii, usar por defecto
+
+    // Crear usuario en Firebase Authentication
+    auth.createUserWithEmailAndPassword(email, password)
+      .then((cred) => {
+        // Guardar la información del usuario en Firestore
+        return db.collection("usuarios").doc(cred.user.uid).set({
+          nnid: nnid,
+          mii_url: mii_url
+        });
+      })
+      .then(() => {
+        // Redirigir al menú principal después de un registro exitoso
+        window.location.href = "https://yosmakii99.github.io/miiverse_project/"; // Reemplaza con la URL de tu menú principal
+      })
+      .catch((err) => {
+        // Mostrar error si algo sale mal
+        alert(err.message);
+      });
+  });
+</script>
